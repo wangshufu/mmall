@@ -45,6 +45,11 @@ public class MD5Util {
         return resultString.toUpperCase();
     }
 
+    /**
+     * 加盐值
+     * @param origin
+     * @return
+     */
     public static String MD5EncodeUtf8(String origin) {
         origin = origin + PropertiesUtil.getProperty("password.salt", "");
         return MD5Encode(origin, "utf-8");

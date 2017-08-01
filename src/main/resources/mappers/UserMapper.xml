@@ -162,7 +162,7 @@
   <select id="checkAnswer" resultType="int" parameterType="map">
     SELECT count(1) FROM mmall_user
     WHERE username = #{username}
-    and password = #{password}
+    and question = #{question}
     and answer = #{answer}
   </select>
   <select id="selectQuestionByUsername" resultType="string" parameterType="string">
@@ -171,8 +171,13 @@
   </select>
   <select id="checkPassword" resultType="int" parameterType="map">
     SELECT count(1) FROM mmall_user
-    WHERE id = #{id}
+    WHERE id = #{userId}
     and password = #{passwordOld}
+  </select>
+  <select id="checkEmailByUserId" resultType="int" parameterType="map">
+    SELECT count(1) FROM mmall_user
+    WHERE email = #{email}
+    and id != #{id}
   </select>
   <update id="updatePasswordByUsername" parameterType="map" >
     update mmall_user

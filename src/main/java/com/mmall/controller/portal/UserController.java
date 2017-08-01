@@ -1,6 +1,7 @@
 package com.mmall.controller.portal;
 
 import com.mmall.common.Const;
+import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
@@ -27,15 +28,15 @@ public class UserController {
     /**
      * 登录接口
      *
-     * @param userName
+     * @param username
      * @param password
      * @param session
      * @return
      */
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody//用springMVC的jackjson自动序列化对象为json数据,返回给前端
-    public ServerResponse<User> login(String userName, String password, HttpSession session) {
-        ServerResponse<User> response = iUserService.login(userName, password);
+    public ServerResponse<User> login(String username, String password, HttpSession session) {
+        ServerResponse<User> response = iUserService.login(username, password);
         if (response.isSuccess()) {
             session.setAttribute(Const.CURRENT_USER, response.getData());
         }
@@ -48,7 +49,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "logout.do", method = RequestMethod.GET)
+    @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> logout(HttpSession session) {
         session.removeAttribute(Const.CURRENT_USER);
@@ -84,7 +85,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "getUserInfo.do", method = RequestMethod.GET)
+    @RequestMapping(value = "getUserInfo.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<User> getUserInfo(HttpSession session){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -108,14 +109,14 @@ public class UserController {
     /**
      * 校验用户的问题与答案是否一致,一致的话返回token
      * @param username
-     * @param password
+     * @param question
      * @param answer
      * @return
      */
     @RequestMapping(value = "forgetCheckAnswer.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> forgetCheckAnswer(String username,String password,String answer){
-        return iUserService.checkAnswer(username, password, answer);
+    public ServerResponse<String> forgetCheckAnswer(String username,String question,String answer){
+        return iUserService.checkAnswer(username, question, answer);
     }
 
     /**
@@ -146,5 +147,43 @@ public class UserController {
             return ServerResponse.createByError("用户未登录");
         }
         return iUserService.resetPassword(passwordOld,passwordNew,user);
+    }
+
+    /**
+     * 更新信息接口
+     * @param session
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "updateInformation.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> updateInformation(HttpSession session,User user){
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null){
+            return ServerResponse.createByError("用户未登录");
+        }
+        //设置userId-->因为传过来的userId是为null的;为什么????
+        user.setId(currentUser.getId());
+        user.setUsername(currentUser.getUsername());
+        ServerResponse<User> userServerResponse = iUserService.updateInformation(user);
+        if (userServerResponse.isSuccess()){
+            session.setAttribute(Const.CURRENT_USER,userServerResponse.getData());
+        }
+        return userServerResponse;
+    }
+
+    /**
+     * 登录状态下,获取个人信息
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "getInformation.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> getInformation(HttpSession session){
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null){
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"需要强制登录");
+        }
+        return iUserService.getInformation(currentUser.getId());
     }
 }
