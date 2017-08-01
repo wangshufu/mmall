@@ -171,7 +171,7 @@
   </select>
   <select id="checkPassword" resultType="int" parameterType="map">
     SELECT count(1) FROM mmall_user
-    WHERE id = #{userId}
+    WHERE id = #{id}
     and password = #{passwordOld}
   </select>
   <select id="checkEmailByUserId" resultType="int" parameterType="map">

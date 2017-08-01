@@ -149,11 +149,12 @@ public class UserServiceImpl implements IUserService {
             return ServerResponse.createByError("新密码不能为空");
         }
         //防止横向越权,需要校验passwordOld,一定要指定是这个用户的,不让我们直接用passwordOld去查的话,有可能查询得到的结果很多,因为多个用户的密码有可能是一样的
+        System.out.println("user.getId()="+user.getId());
         int resultCount = userMapper.checkPassword(MD5Util.MD5EncodeUtf8(passwordOld), user.getId());
         if (resultCount > 0) {
             //重置新密码
             user.setPassword(MD5Util.MD5EncodeUtf8(passwordNew));
-            int insertSelective = userMapper.insertSelective(user);
+            int insertSelective = userMapper.updateByPrimaryKeySelective(user);
             if (insertSelective > 0) {
                 return ServerResponse.createBySuccessMessage("修改密码成功");
             }
@@ -175,7 +176,7 @@ public class UserServiceImpl implements IUserService {
             updateUser.setPhone(user.getPhone());
             updateUser.setQuestion(user.getQuestion());
             updateUser.setAnswer(user.getAnswer());
-            int updateResult = userMapper.insertSelective(updateUser);
+            int updateResult = userMapper.updateByPrimaryKeySelective(updateUser);
             if (updateResult > 0){
                 return ServerResponse.createBySuccess("更新个人信息成功",updateUser);
             }else {
@@ -196,5 +197,16 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.createBySuccess(user);
     }
 
-
+    /**
+     * 校验用户是否属于管理员
+     * @param user
+     * @return
+     */
+    @Override
+    public ServerResponse<String> checkUserRole(User user) {
+        if (user != null && Const.Role.ROLE_ADMIN == user.getRole()){
+            return ServerResponse.createBySuccessMessage("校验成功,属于管理员");
+        }
+        return ServerResponse.createByError("校验失败");
+    }
 }
