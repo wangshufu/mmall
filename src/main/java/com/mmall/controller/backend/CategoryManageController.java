@@ -10,6 +10,7 @@ import com.mmall.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -20,8 +21,8 @@ import java.util.List;
  * Created by wangshufu on 2017/8/1.
  */
 @Controller
-@RequestMapping("/manager/category")
-public class CategoryManagerController {
+@RequestMapping("/manage/category")
+public class CategoryManageController {
 
     @Autowired
     private IUserService iUserService;
@@ -36,7 +37,7 @@ public class CategoryManagerController {
      * @param parentId
      * @return
      */
-    @RequestMapping("addCategory.do")
+    @RequestMapping(value = "addCategory.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse addCategory(HttpSession session,String categoryName,
                                               @RequestParam(value = "parentId",defaultValue = "0") Integer parentId){
@@ -61,10 +62,9 @@ public class CategoryManagerController {
      * @param categoryId
      * @return
      */
-    @RequestMapping("updateCategoryInfo.do")
+    @RequestMapping(value = "updateCategoryInfo.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse updateCategoryInfo(HttpSession session,String categoryName,
-                                                     @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId){
+    public ServerResponse updateCategoryInfo(HttpSession session,String categoryName,Integer categoryId){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"请先登录");
@@ -85,7 +85,7 @@ public class CategoryManagerController {
      * @param parentId
      * @return
      */
-    @RequestMapping("getChildrenParallelCategory.do")
+    @RequestMapping(value = "getChildrenParallelCategory.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<List<Category>> getChildrenParallelCategory(HttpSession session,
                                                             @RequestParam(value = "parentId",defaultValue = "0") Integer parentId){
@@ -103,7 +103,7 @@ public class CategoryManagerController {
         }
     }
 
-    @RequestMapping("get_deep_category.do")
+    @RequestMapping(value = "getCategoryAndDeepChildrenCategory.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse getCategoryAndDeepChildrenCategory(HttpSession session,@RequestParam(value = "categoryId" ,defaultValue = "0") Integer categoryId){
         User user = (User)session.getAttribute(Const.CURRENT_USER);
