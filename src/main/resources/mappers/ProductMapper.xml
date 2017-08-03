@@ -176,4 +176,54 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_product
+    ORDER BY id asc
+  </select>
+
+  <select id="selectByNameAndProductId" resultMap="BaseResultMap" parameterType="map">
+--     第一种写法:需要保证name像productName并且id也要等与productId,与业务不符,业务是name或id相等
+    <!--SELECT-->
+    <!--<include refid="Base_Column_List"/>-->
+    <!--FROM mmall_product-->
+    <!--WHERE name LIKE #{productName},-->
+    <!--and id = #{productId}-->
+--     第二种写法:加了if判断,但是有个问题,就是当productName=null时,就直接走and ..了,不是以where开头,这样会有问题
+    <!--SELECT-->
+    <!--<include refid="Base_Column_List"/>-->
+    <!--FROM mmall_product-->
+    <!--<if test="productName != null">-->
+      <!--WHERE name LIKE #{productName}-->
+    <!--</if>-->
+    <!--<if test="productId != null">-->
+      <!--and id = #{productId}-->
+    <!--</if>-->
+--     第三种写法:直接前面加了个1=1,但是这样写太low了,会给编码生涯中留下黑点,下面mybatis给我们提供了很优雅的方法解决
+    <!--SELECT-->
+    <!--<include refid="Base_Column_List"/>-->
+    <!--FROM mmall_product-->
+    <!--WHERE 1=1-->
+    <!--<if test="productName != null">-->
+      <!--and name LIKE #{productName}-->
+    <!--</if>-->
+    <!--<if test="productId != null">-->
+      <!--and id = #{productId}-->
+    <!--</if>-->
+    第四种写法:where如果读取到前面直接会and或or的话,他就会过滤掉
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM mmall_product
+    <where>
+      <if test="productName != null">
+        and name LIKE #{productName}
+      </if>
+      <if test="productId != null">
+        and id = #{productId}
+      </if>
+    </where>
+
+ </select>
 </mapper>
