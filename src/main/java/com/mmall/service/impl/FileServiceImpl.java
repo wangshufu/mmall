@@ -26,7 +26,7 @@ public class FileServiceImpl implements IFileService {
         String originalFilename = file.getOriginalFilename();
         //原图片名为abc.fff.jpg,originalFilename.substring(originalFilename.lastIndexOf("."))--->.jpg;所以得+1才能得到jpg
         //图片后缀/格式-->jpg
-        String extensionFile = originalFilename.substring(originalFilename.lastIndexOf("."+1));
+        String extensionFile = originalFilename.substring(originalFilename.lastIndexOf(".")+1);
         //因为不同的用户有可能上传的图片名一样,所以我们的图片名得改成唯一的
         String fileName = UUID.randomUUID()+"."+extensionFile;
         logger.info("开始上传文件,上传文件的文件名为{},上传的路径为{},新的文件名为{}",originalFilename,path,fileName);
@@ -38,7 +38,7 @@ public class FileServiceImpl implements IFileService {
             fileDir.mkdirs();
         }
         //目标文件
-        File targetFile = new File(fileName,path);
+        File targetFile = new File(path,fileName);
 
         try {
             //将文件上传到tomcat的upload文件夹下
