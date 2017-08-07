@@ -116,4 +116,68 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="selectCartByUserIdProductId" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+    and product_id = #{productId}
+  </select>
+
+
+
+  <select id="selectCartByUserId" resultMap="BaseResultMap" parameterType="int">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+  </select>
+
+  <select id="selectCartProductCheckedStatusByUserId" resultType="int" parameterType="int">
+    SELECT  count(1) from mmall_cart where checked = 0 and user_id = #{userId}
+  </select>
+
+  <delete id="deleteByUserIdProductIds" parameterType="map">
+    delete from mmall_cart
+    where user_id = #{userId}
+    <if test="productIdList != null">
+      and product_id in
+      <foreach collection="productIdList" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </delete>
+
+
+  <update id="checkedOrUncheckedProduct" parameterType="map">
+    UPDATE  mmall_cart
+    set checked = #{checked},
+    update_time = now()
+    where user_id = #{userId}
+    <if test="productId != null">
+      and product_id = #{productId}
+    </if>
+  </update>
+
+
+  <select id="selectCartProductCount" parameterType="int" resultType="int">
+--     这个sql语句有个隐患,就是我们的返回值是int,当我们的userId为bull或者userId在数据库中不存在时,这个查询的结果sum(quantity)就会为null,
+--     而null是无法赋值为int的,所以我们可以把返回值改为Integer,或者sql中对userId判断;这里我们采用下面一种写法,如果这个sum(quantity)为null
+--     的话,给个默认值0
+--     select sum(quantity) as count from mmall_cart where user_id = #{userId}
+    select IFNULL(sum(quantity),0) as count from mmall_cart where user_id = #{userId}
+  </select>
+
+
+  <select id="selectCheckedCartByUserId" parameterType="int" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+    and checked = 1
+  </select>
+
+
 </mapper>
