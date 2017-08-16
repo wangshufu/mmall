@@ -25,6 +25,15 @@ public class Const {
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc","price_asc");
     }
 
+    public interface PropertiesKey{
+        //密码加盐
+        public static final String password_salt = "password.salt";
+        //ftp服务器前缀
+        public static final String ftp_server_http_prefix = "ftp.server.http.prefix";
+        //支付宝回调url
+        public static final String alipay_callback_url = "alipay.callback.url";
+    }
+
 
     public enum ProductStatusEnum{
         ON_SALE(1,"在线");

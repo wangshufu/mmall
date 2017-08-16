@@ -29,7 +29,7 @@ public class FTPUtil {
     private String password;
     private FTPClient ftpClient;
 
-    public FTPUtil(String ip, int port, String user, String password) {
+    private FTPUtil(String ip, int port, String user, String password) {
         this.ip = ip;
         this.port = port;
         this.user = user;

@@ -4,22 +4,32 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class OrderItem {
+
+    //id
     private Integer id;
 
+    //用户id
     private Integer userId;
 
+    //订单号
     private Long orderNo;
 
+    //商品id
     private Integer productId;
 
+    //商品名
     private String productName;
 
+    //商品图片
     private String productImage;
 
+    //下单时的价格
     private BigDecimal currentUnitPrice;
 
+    //商品数量
     private Integer quantity;
 
+    //总价
     private BigDecimal totalPrice;
 
     private Date createTime;
