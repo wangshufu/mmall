@@ -20,7 +20,7 @@ public enum  ResponseCode {
     public int getCode(){
         return this.code;
     }
-    public String getDecs(){
+    public String getDesc(){
         return this.desc;
     }
 }
